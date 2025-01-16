@@ -109,12 +109,23 @@ fn get_next(
                 let node = nodes.get(reference).clone().unwrap();
                 (
                     node.guid.clone(),
-                    (node.position - nodes.get(guid).clone().unwrap().position.clone()).length()
-                        as i32,
+                    distance_to_next(nodes.get(guid).unwrap(), node),
                 )
             })
         })
         .collect()
+}
+
+fn distance_to_next(
+    current: &VehicleNode,
+    next: &VehicleNode
+) -> i32 {
+    let mut multiplier: i32 = 100;
+    let speed = current.attributes.get("Speed");
+    if speed.is_some() && speed.unwrap() != "0" {
+        multiplier /= speed.unwrap().parse::<i32>().unwrap();
+    }
+    ((current.position - next.position).length() * multiplier as f32) as i32
 }
 
 pub fn pathfind(
@@ -128,7 +139,7 @@ pub fn pathfind(
         |guid| get_next(guid, &links, &nodes),
         |guid| {
             let pos = nodes.get(&goal).unwrap().position.clone();
-            (nodes.get(guid).unwrap().position - Vec3::new(pos.x, pos.y, pos.z)).length() as i32
+            ((nodes.get(guid).unwrap().position - Vec3::new(pos.x, pos.y, pos.z)).length() * 100.) as i32
         },
         |guid| guid == &goal,
     )

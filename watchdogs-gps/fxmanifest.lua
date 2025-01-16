@@ -4,6 +4,7 @@ game 'gta5'
 author 'You'
 version '1.0.0'
 
-client_scripts {"data/*.lua", "client.lua"}
+client_scripts {"client.lua"}
+server_scripts {'data/*.lua', 'server.lua'}
 
 lua54 'yes'

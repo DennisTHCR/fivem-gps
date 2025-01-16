@@ -42,85 +42,6 @@ fn init_assets(
     });
 }
 
-/* fn read(mut commands: Commands, assets: Res<XMLAssets>) {
-    let mut buffer = Vec::new();
-    let mut reader = Reader::from_file("paths.xml").unwrap();
-    let mut depth = 0;
-    let mut current = Vec::new();
-    loop {
-        match reader.read_event_into(&mut buffer) {
-            Err(e) => panic!("{:?}", e),
-            Ok(Event::Eof) => {break}
-            Ok(Event::Start(e)) => {
-                if e.name().as_ref() == b"object" {
-                    if depth == 0 {
-                        e.attributes().for_each(|atr| {
-                            let attribute = atr.unwrap();
-                            if attribute.key.as_ref() == b"class" {
-                                current = attribute.value.to_vec();
-                            }
-                        });
-                    }
-                    depth += 1;
-                }
-            }
-            Ok(Event::End(e)) => {
-                if e.name().as_ref() == b"object" {
-                    depth -= 1;
-                }
-            }
-            Ok(Event::Empty(e)) => {
-                if e.name().as_ref() == b"position" {
-                    let mut x = default();
-                    let mut y = default();
-                    let mut z = default();
-                    e.attributes().for_each(|atr| {
-                        let attribute = atr.unwrap();
-                        match attribute.key.as_ref() {
-                            b"x" => {
-                                x = String::from_utf8(
-                                    attribute.value.iter().map(|&n| n).collect::<Vec<_>>(),
-                                )
-                                .unwrap()
-                                .parse::<f32>()
-                                .unwrap();
-                            }
-                            b"y" => {
-                                y = String::from_utf8(
-                                    attribute.value.iter().map(|&n| n).collect::<Vec<_>>(),
-                                )
-                                .unwrap()
-                                .parse::<f32>()
-                                .unwrap();
-                            }
-                            b"z" => {
-                                z = String::from_utf8(
-                                    attribute.value.iter().map(|&n| n).collect::<Vec<_>>(),
-                                )
-                                .unwrap()
-                                .parse::<f32>()
-                                .unwrap();
-                            }
-                            _ => (),
-                        }
-                    });
-                    commands.spawn((
-                        if current == b"vehiclenode".to_vec() {
-                        assets.blue.clone()
-                    } else {
-                        assets.red.clone()
-                    },
-                        assets.circle.clone(),
-                        Transform::from_xyz(x, y, z),
-                    ));
-                }
-            }
-            _ => {}
-        };
-    }
-}
-*/
-
 #[derive(Component)]
 pub struct NodesParentMarker;
 
@@ -199,7 +120,7 @@ fn read(mut commands: Commands, assets: Res<XMLAssets>) {
     let objects = scene.clone().objects.object;
     let nodes = guid_to_node(objects.clone());
     let links = node_to_links(objects.clone());
-    // let _ = serialize_to_lua(&nodes, &links);
+    let _ = serialize_to_lua(&nodes, &links);
     let path = pathfind(
         &nodes,
         &links,
@@ -207,7 +128,6 @@ fn read(mut commands: Commands, assets: Res<XMLAssets>) {
         objects[1001].guid.clone(),
     )
     .unwrap();
-    println!("{} {}", String::from("6EBB61B9-2B35-4D22-B9E2-48D9FB0A3BDD"), String::from("32EB89C5-3597-441B-9E54-28341024C1C2"));
     commands
         .spawn((
             Name::from("NodesParent"),
